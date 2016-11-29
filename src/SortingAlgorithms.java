@@ -1,10 +1,7 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
 import java.util.Stack;
 
 public class SortingAlgorithms {
@@ -118,6 +115,33 @@ public class SortingAlgorithms {
 		testStack.push(7);
 		StackProblems.sortStack(testStack);
 		 StackProblems.printStack(testStack);
+		 
+		System.out.println(Integer.toBinaryString(BitManipulationProblems.updateBits(0b10000000000, 0b10011, 2, 6)));
+		
+		System.out.println("Is 97 a prime? (Naive)" + MathAndLogicProblems.isPrimeNaive(97));
+		System.out.println("Is 97 a prime? (Smart)" + MathAndLogicProblems.isPrimeNaive(97));
+		
+		System.out.println("Gender Ratio: " + MathAndLogicProblems.runFamilies(100));
+		
+		boolean[] doors = MathAndLogicProblems.hundredDoors();
+		int openCount = 0;
+		for(int i=0; i<doors.length; i++) {
+			if(doors[i]) openCount++;
+		}
+		System.out.println("Open doors: " + openCount);
+		
+		int[] sortedArray = {0,1,2,3,4,5,6,7,8,9};
+		GraphProblems.TreeNode root = GraphProblems.createMinimalBST(sortedArray, 0, sortedArray.length - 1);
+		GraphProblems.inOrderTraversal(root);
+		
+		System.out.println("Levels: ");
+		ArrayList<LinkedList<GraphProblems.TreeNode>> levels = GraphProblems.createLinkedListPerLevel(root);
+		for(LinkedList<GraphProblems.TreeNode> list : levels) {
+			for(GraphProblems.TreeNode node : list) {
+				System.out.print(node.value + ' ');
+			}
+			System.out.print("\n");
+		}
 	}
 	
 	private static void printMatrix(int[][] matrix) {
