@@ -44,17 +44,24 @@ public class GraphProblems {
 	}
 	
 	static public class TreeNode extends Node{
+		TreeNode parent;
 
 		public TreeNode(int value) {
 			super(value);
 		}
 		
 		public void addChildLeft(TreeNode left) {
-			this.children.add(0, left);
+			//if(left != null) {
+				this.children.add(0, left);
+				//left.parent = this;
+			//}
 		}
 		
 		public void addChildRight(TreeNode right) {
-			this.children.add(1, right);
+			//if(right != null) {
+				this.children.add(1, right);
+				//right.parent = this;
+			//}
 		}
 		
 		public TreeNode getChildLeft() {
@@ -130,6 +137,71 @@ public class GraphProblems {
 		createLinkedListPerLevel(node.getChildRight(), listPerLevel,level+1);
 	}
 	
+	public static int checkHeight(TreeNode root) {
+		if(root == null) return -1;
+		
+		int leftHeight = checkHeight(root.getChildLeft());
+		if(leftHeight == Integer.MIN_VALUE) return Integer.MIN_VALUE;
+		
+		int rightHeight = checkHeight(root.getChildRight());
+		if(rightHeight == Integer.MIN_VALUE) return Integer.MIN_VALUE;
+		
+		int heightDiff = leftHeight - rightHeight;
+		if(Math.abs(heightDiff) > 1) return Integer.MIN_VALUE;
+		else return Math.max(leftHeight, rightHeight) + 1;
+	}
+	
+	public static boolean isBalanced(TreeNode root) {
+		return checkHeight(root) != Integer.MIN_VALUE;
+	}
+	
+	public static boolean isValidBST(TreeNode root) {
+		return checkBST(root, null, null);
+	}
+	
+	public static boolean checkBST(TreeNode node, Integer min, Integer max) {
+		if(node == null) return true;
+		
+		if(min != null && node.value <= min || max != null && node.value > max) {
+			return false;
+		}
+		
+		if(!checkBST(node.getChildLeft(), min, node.value) ||
+				!checkBST(node.getChildRight(), node.value, max)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static TreeNode getCommonAncestor(TreeNode a, TreeNode b) {
+		int delta = depth(a) - depth(b);
+		TreeNode first = (delta > 0) ? b : a; //shallower node
+		TreeNode second = (delta > 0) ? a : b; //deeper node
+		
+		//Bring the deeper node up to the shallower node well
+		while(delta > 0 && second != null) {
+			second = second.parent;
+			delta--;
+		}
+		
+		while(first != second && first != null && second != null) {
+			first = first.parent;
+			second = second.parent;
+		}
+		
+		return first == null || second == null ? null : first;
+	}
+	
+	public static int depth(TreeNode node) {
+		int depth = 0;
+		while(node.parent != null) {
+			node = node.parent;
+			depth++;
+		}
+		return depth;
+	}
+
 	public static void inOrderTraversal(TreeNode root) {
 		if(root != null) {
 			inOrderTraversal(root.getChildLeft());

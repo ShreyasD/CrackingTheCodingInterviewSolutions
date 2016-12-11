@@ -130,17 +130,46 @@ public class SortingAlgorithms {
 		}
 		System.out.println("Open doors: " + openCount);
 		
-		int[] sortedArray = {0,1,2,3,4,5,6,7,8,9};
+		int[] sortedArray = {0,1,2,3,4,5,6,7,8,9,10};
 		GraphProblems.TreeNode root = GraphProblems.createMinimalBST(sortedArray, 0, sortedArray.length - 1);
 		GraphProblems.inOrderTraversal(root);
 		
-		System.out.println("Levels: ");
+		System.out.println("\nLevels: ");
 		ArrayList<LinkedList<GraphProblems.TreeNode>> levels = GraphProblems.createLinkedListPerLevel(root);
 		for(LinkedList<GraphProblems.TreeNode> list : levels) {
 			for(GraphProblems.TreeNode node : list) {
-				System.out.print(node.value + ' ');
+				System.out.print(node.value + " ");
 			}
 			System.out.print("\n");
+		}
+		
+		System.out.println("Is Balanced? : " + GraphProblems.isBalanced(root));
+		System.out.println("Is BST? : " + GraphProblems.isValidBST(root));
+		
+		//System.out.println(GraphProblems.getCommonAncestor(root.getChildRight().getChildLeft(), root.getChildLeft().getChildLeft()).value);
+		
+		//Magic Index
+		int[] magicArray = {-2,-1,1,3,7,9,23,25,27};
+		System.out.println("Magic Index: " + DynamicProgrammingAndRecursion.magicIndex(magicArray, 0, magicArray.length-1));
+		int[] magicArrayNotDistinct = {-10,-5,2,2,2,3,4,7,9,12,13};
+		System.out.println("Magic Index not distinct: " + DynamicProgrammingAndRecursion.magicIndexNotDistinct(magicArrayNotDistinct, 0, magicArray.length-1));
+		
+		System.out.println(convert("PAYPALISHIRING", 3));
+		System.out.println(convertTwo("PAYPALISHIRING", 3));
+		
+		System.out.println("intToRoman: " + intToRoman(3999));
+		System.out.println("romanToInt: " + romanToInt("DCXXI"));
+		
+		ArrayList<Integer> testArray = new ArrayList<>();
+		testArray.add(1);
+		testArray.add(2);
+		testArray.add(3);
+		for(ArrayList<Integer> subSet : DynamicProgrammingAndRecursion.getSubsets(testArray)) {
+			System.out.print("{");
+			for(Integer i=0; i < subSet.size() ; i++) {
+				System.out.print(subSet.get(i) + ", ");
+			}
+			System.out.print("}, ");
 		}
 	}
 	
@@ -522,4 +551,101 @@ public class SortingAlgorithms {
 		
 		return ret;
 	}
+	
+	public static String convert(String s, int numRows) {
+        if(s == null) return "";
+        if(s.isEmpty() || s.length() == 1) return s;
+        char[] charArray = s.toCharArray();
+        char[][] charMatrix = new char[numRows][s.length()];
+        
+        int i=0,col=0;
+        while(i < s.length()) {
+            //down
+            for(int j=0; j < numRows && i < s.length(); j++) {
+            	System.out.println("i: " + i + ", j: " + j + ", col: " + col);
+                charMatrix[j][col] = charArray[i];
+                i++;
+            }
+            
+            //across
+            col++;
+            for(int j=numRows-2; j > 0  && i < s.length(); j--) {
+            	System.out.println("i: " + i + ", j: " + j + ", col: " + col);
+                charMatrix[j][col] = charArray[i];
+                i++;
+                col++;
+            }
+        }
+        
+        //Copy characters to string
+        StringBuilder sb = new StringBuilder();
+        for(int j=0; j < charMatrix.length; j++) {
+            for(int k=0; k < charMatrix[0].length; k++) {
+                if(charMatrix[j][k] != '\u0000') sb.append(charMatrix[j][k]);
+            }
+        }
+        
+        return sb.toString();
+    }
+	
+	public static String convertTwo(String s, int nRows) {
+        if(nRows <= 1) return s;
+        String result = "";
+        //the size of a cycle(period)
+        int cycle = 2 * nRows - 2;
+        for(int i = 0; i < nRows; ++i)
+        {
+            for(int j = i; j < s.length(); j = j + cycle){
+               result = result + s.charAt(j);
+               int secondJ = (j - i) + cycle - i;
+               if(i != 0 && i != nRows-1 && secondJ < s.length())
+                   result = result + s.charAt(secondJ);
+            }
+        }
+        return result;
+    }
+	
+	public static  String intToRoman(int num) {
+        String[] thousands = new String[] {"", "M", "MM", "MMM"};
+        String[] hundreds = new String[] {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        String[] tens = new String[] {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        String[] ones = new String[] {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        return thousands[num/1000] + hundreds[(num%1000)/100] + tens[(num%100)/10] + ones[(num%10)];
+    }
+	
+	public static int romanToInt(String s) {
+		int num = 0, i = 0;
+		char[] c = s.toCharArray();
+        while(i < c.length) {
+        	if(c[i] == 'M') num += 1000;
+        	else if(c[i] == 'D') num += 500;
+        	else if(c[i] == 'C') {
+        		if(i < c.length - 1 && (c[i+1] == 'M' || c[i+1] == 'D')) {
+        			num += (c[i+1] == 'M') ? 900 : 400;
+        			i++;
+        		} else {
+        			num += 100;
+        		}
+        	} else if (c[i] == 'X') {
+        		if(i < c.length - 1 && (c[i+1] == 'C' || c[i+1] == 'L')) {
+        			num += (c[i+1] == 'C') ? 90 : 40;
+        			i++;
+        		} else {
+        			num += 10;
+        		};
+        	} else if (c[i] == 'I'){
+        		if(i < c.length - 1 && (c[i+1] == 'X' || c[i+1] == 'V')) {
+        			num += (c[i+1] == 'X') ? 9 : 4;
+        			i++;
+        		} else {
+        			num += 1;
+        		}
+        	} else {
+        		num += (c[i] == 'D') ? 500 : (c[i] == 'L') ? 50 : 5;
+        	}
+        	if(i < c.length) i++;
+        }
+        
+        return num;
+    }
 }
